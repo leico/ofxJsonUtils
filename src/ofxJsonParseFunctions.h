@@ -26,141 +26,152 @@ namespace bbb {
             public:
                 static constexpr bool value = decltype(Test<T>(nullptr))::value;
             };
-            
+
             static bool has_keys(const ofJson &json, const std::vector<std::string> &keys) {
-                auto end = json.end();
+                auto &&end = json.end();
                 bool all = true;
                 for(const auto &key : keys) {
                     all &= (json.find(key) != end);
                 }
                 return all;
             }
-        };
-        
+        }
+    };
+};
+
+static inline void from_json(const ofJson &json, ofVec2f &v) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"x", "y"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec2f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json["x"], json["y"]);
+    } else if(json.is_array()) {
+        if(json.size() < 2) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec2f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json[0], json[1]);
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofVec2f") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+static inline void from_json(const ofJson &json, ofVec3f &v) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"x", "y", "z"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec3f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json["x"], json["y"], json["z"]);
+    } else if(json.is_array()) {
+        if(json.size() < 3) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec3f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json[0], json[1], json[2]);
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofVec3f") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+static inline void from_json(const ofJson &json, ofVec4f &v) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"x", "y", "z", "w"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec4f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json["x"], json["y"], json["z"], json["w"]);
+    } else if(json.is_array()) {
+        if(json.size() < 4) {
+            ofLogVerbose("ofxJsonUtils::parse ofVec4f") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        v.set(json[0], json[1], json[2], json[3]);
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofVec4f") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+static inline void from_json(const ofJson &json, ofRectangle &rect) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"x", "y", "width", "height"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofRectangle") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        rect.set(json["x"], json["y"], json["width"], json["height"]);
+    } else if(json.is_array()) {
+        if(json.size() < 4) {
+            ofLogVerbose("ofxJsonUtils::parse ofRectangle") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        rect.set(json[0], json[1], json[2], json[3]);
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofRectangle") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+static inline void from_json(const ofJson &json, ofMatrix4x4 &mat) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"value0", "value1", "value2", "value3"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        from_json(json["value0"].get<ofJson::object_t>(), mat._mat[0]);
+        from_json(json["value1"].get<ofJson::object_t>(), mat._mat[1]);
+        from_json(json["value2"].get<ofJson::object_t>(), mat._mat[2]);
+        from_json(json["value3"].get<ofJson::object_t>(), mat._mat[3]);
+    } else if(json.is_array()) {
+        if(json.size() < 16) {
+            ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        mat.set(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8], json[9], json[10], json[11], json[12], json[13], json[14], json[15]);
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+template <typename PixelType>
+static inline void from_json(const ofJson &json, ofColor_<PixelType> &c) {
+    if(json.is_object()) {
+        auto &&end = json.end();
+        if(!bbb::json_utils::detail::has_keys(json, {"r", "g", "b"})) {
+            ofLogVerbose("ofxJsonUtils::parse ofColor") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        c.set(json["r"], json["g"], json["b"]);
+        if(json.find("a") != json.end()) c.a = json["a"];
+    } else if(json.is_array()) {
+        if(json.size() < 3) {
+            ofLogVerbose("ofxJsonUtils::parse ofColor") << bbb::json_utils::skip_invalid_format;
+            return;
+        }
+        c.set(json[0], json[1], json[2]);
+        if(3 < json.size()) c.a = json[3];
+    } else {
+        ofLogVerbose("ofxJsonUtils::parse ofColor") << bbb::json_utils::skip_json_isnt_object_or_array;
+    }
+}
+
+template <typename Type>
+static inline auto from_json(const ofJson &json, Type &v)
+-> typename std::enable_if<bbb::json_utils::detail::has_loadJson<Type>::value>::type
+{
+    v.loadJson(json);
+}
+
+namespace bbb {
+    namespace json_utils {
         template <typename T>
         static inline auto parse(const ofJson &json, T &value)
-        -> typename std::enable_if<json_utils::detail::has_loadJson<T>::value>::type {
-            value.loadJson(json);
-        }
-        
-        static inline void parse(const ofJson &json, ofVec2f &v) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"x", "y"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec2f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json["x"], json["y"]);
-            } else if(json.is_array()) {
-                if(json.size() < 2) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec2f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json[0], json[1]);
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofVec2f") << skip_json_isnt_object_or_array;
-            }
-        }
-        
-        static inline void parse(const ofJson &json, ofVec3f &v) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"x", "y", "z"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec3f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json["x"], json["y"], json["z"]);
-            } else if(json.is_array()) {
-                if(json.size() < 3) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec3f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json[0], json[1], json[2]);
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofVec3f") << skip_json_isnt_object_or_array;
-            }
-        }
-        
-        static inline void parse(const ofJson &json, ofVec4f &v) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"x", "y", "z", "w"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec4f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json["x"], json["y"], json["z"], json["w"]);
-            } else if(json.is_array()) {
-                if(json.size() < 4) {
-                    ofLogVerbose("ofxJsonUtils::parse ofVec4f") << skip_invalid_format;
-                    return;
-                }
-                v.set(json[0], json[1], json[2], json[3]);
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofVec4f") << skip_json_isnt_object_or_array;
-            }
-        }
-    
-        static inline void parse(const ofJson &json, ofRectangle &rect) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"x", "y", "width", "height"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofRectangle") << skip_invalid_format;
-                    return;
-                }
-                rect.set(json["x"], json["y"], json["width"], json["height"]);
-            } else if(json.is_array()) {
-                if(json.size() < 4) {
-                    ofLogVerbose("ofxJsonUtils::parse ofRectangle") << skip_invalid_format;
-                    return;
-                }
-                rect.set(json[0], json[1], json[2], json[3]);
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofRectangle") << skip_json_isnt_object_or_array;
-            }
-        }
-        
-        static inline void parse(const ofJson &json, ofMatrix4x4 &mat) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"value0", "value1", "value2", "value3"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << skip_invalid_format;
-                    return;
-                }
-                parse(json["value0"].get<ofJson::object_t>(), mat._mat[0]);
-                parse(json["value1"].get<ofJson::object_t>(), mat._mat[1]);
-                parse(json["value2"].get<ofJson::object_t>(), mat._mat[2]);
-                parse(json["value3"].get<ofJson::object_t>(), mat._mat[3]);
-            } else if(json.is_array()) {
-                if(json.size() < 16) {
-                    ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << skip_invalid_format;
-                    return;
-                }
-                mat.set(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8], json[9], json[10], json[11], json[12], json[13], json[14], json[15]);
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofMatrix4x4") << skip_json_isnt_object_or_array;
-            }
-        }
-        
-        template <typename PixelType>
-        static inline void parse(const ofJson &json, ofColor_<PixelType> &c) {
-            if(json.is_object()) {
-                auto end = json.end();
-                if(!json_utils::detail::has_keys(json, {"r", "g", "b"})) {
-                    ofLogVerbose("ofxJsonUtils::parse ofColor") << skip_invalid_format;
-                    return;
-                }
-                c.set(json["r"], json["g"], json["b"]);
-                if(json.find("a") != json.end()) c.a = json["a"];
-            } else if(json.is_array()) {
-                if(json.size() < 3) {
-                    ofLogVerbose("ofxJsonUtils::parse ofColor") << skip_invalid_format;
-                    return;
-                }
-                c.set(json[0], json[1], json[2]);
-                if(3 < json.size()) c.a = json[3];
-            } else {
-                ofLogVerbose("ofxJsonUtils::parse ofColor") << skip_json_isnt_object_or_array;
-            }
+        -> decltype(from_json(json, value)) {
+            from_json(json, value);
         }
     };
 };

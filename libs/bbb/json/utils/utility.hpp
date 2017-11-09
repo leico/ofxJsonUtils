@@ -34,7 +34,7 @@ namespace bbb {
         template <typename type>
         static inline bbb::json create(const std::string &key, const type &value) {
             bbb::json json = bbb::json::object();
-            json[key] = convert(value);
+            json[key] = value;
             return json;
         }
         
@@ -42,7 +42,7 @@ namespace bbb {
         static inline auto create(const std::string &key, const type &value, const others & ... args)
         -> typename std::enable_if<2 <= sizeof...(others) && sizeof...(others) % 2 == 0, bbb::json>::type {
             bbb::json json = std::move(create(args ...));
-            json[key] = convert(value);
+            json[key] = value;
             return json;
         }
         
@@ -51,7 +51,7 @@ namespace bbb {
             if(json.find(key) == json.end()) {
                 std::cerr << "[bbb::json_utils::load] " << "skip " << key << ". is null" << std::endl;
             } else {
-                parse(json[key], value);
+                value = json[key];
             }
         }
         
@@ -61,7 +61,7 @@ namespace bbb {
             if(json.find(key) == json.end()) {
                 std::cerr << "[ofxJsonUtils::load] " << "skip " << key << ". is null" << std::endl;
             } else {
-                parse(json[key], value);
+                value = json[key];
             }
             load(json, std::forward<others>(args) ...);
         }

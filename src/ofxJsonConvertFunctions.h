@@ -14,6 +14,19 @@ namespace bbb {
     namespace json_utils {
         namespace detail {
             template <typename T>
+            class has_toJson_const {
+            private:
+                template <typename U, U> struct really_has;
+                template <typename C>
+                static std::true_type Test(really_has<ofJson (C::*)() const, &C::toJson> *);
+                template <typename>
+                static std::false_type Test(...);
+                
+            public:
+                static constexpr bool value = decltype(Test<T>(nullptr))::value;
+            };
+            
+            template <typename T>
             class has_toJson {
             private:
                 template <typename U, U> struct really_has;
@@ -28,62 +41,83 @@ namespace bbb {
                 static constexpr bool value = decltype(Test<T>(nullptr))::value;
             };
         };
-        
+    };
+};
+
+static inline void to_json(ofJson &json, const ofVec2f &v) {
+    json = {
+        { "x", v.x },
+        { "y", v.y }
+    };
+}
+
+static inline void to_json(ofJson &json, const ofVec3f &v) {
+    json = {
+        { "x", v.x },
+        { "y", v.y },
+        { "z", v.z }
+    };
+}
+
+static inline void to_json(ofJson &json, const ofVec4f &v) {
+    json = {
+        { "x", v.x },
+        { "y", v.y },
+        { "z", v.z },
+        { "w", v.w }
+    };
+}
+
+static inline void to_json(ofJson &json, const ofRectangle &rect) {
+    json = {
+        { "x", rect.x },
+        { "y", rect.y },
+        { "width", rect.width },
+        { "height", rect.height }
+    };
+}
+
+static inline void to_json(ofJson &json, const ofMatrix4x4 &mat) {
+    json = {
+        { "value0", mat._mat[0] },
+        { "value1", mat._mat[1] },
+        { "value2", mat._mat[2] },
+        { "value3", mat._mat[3] },
+    };
+}
+
+template <typename PixelType>
+static inline void to_json(ofJson &json, const ofColor_<PixelType> &c) {
+    json = {
+        { "r", c.r },
+        { "g", c.g },
+        { "b", c.b },
+        { "a", c.a }
+    };
+}
+
+template <typename Type>
+static inline auto to_json(ofJson &json, const Type &v)
+-> typename std::enable_if<bbb::json_utils::detail::has_toJson_const<Type>::value>::type
+{
+    json = v.toJson();
+}
+
+template <typename Type>
+static inline auto to_json(ofJson &json, Type &v)
+-> typename std::enable_if<!bbb::json_utils::detail::has_toJson_const<Type>::value && bbb::json_utils::detail::has_toJson<Type>::value>::type
+{
+    json = v.toJson();
+}
+
+namespace bbb {
+    namespace json_utils {
         template <typename T>
-        static inline auto convert(T &value)
-        -> typename std::enable_if<json_utils::detail::has_toJson<T>::value, ofJson>::type {
-            return value.toJson();
-        }
-        static inline ofJson convert(const ofVec2f &v) {
-            return {
-                { "x", v.x },
-                { "y", v.y }
-            };
-        }
-        
-        static inline ofJson convert(const ofVec3f &v) {
-            return {
-                { "x", v.x },
-                { "y", v.y },
-                { "z", v.z }
-            };
-        }
-        
-        static inline ofJson convert(const ofVec4f &v) {
-            return {
-                { "x", v.x },
-                { "y", v.y },
-                { "z", v.z },
-                { "w", v.w }
-            };
-        }
-        
-        static inline ofJson convert(const ofRectangle &rect) {
-            return {
-                { "x", rect.x },
-                { "y", rect.y },
-                { "width", rect.width },
-                { "height", rect.height }
-            };
-        }
-        
-        static inline ofJson convert(const ofMatrix4x4 &mat) {
-            return {
-                { "value0", convert(mat._mat[0])},
-                { "value1", convert(mat._mat[1])},
-                { "value2", convert(mat._mat[2])},
-                { "value3", convert(mat._mat[3])},
-            };
-        }
-        
-        template <typename PixelType>
-        static inline ofJson convert(const ofColor_<PixelType> &c) {
-            return {
-                { "r", c.r },
-                { "g", c.g },
-                { "b", c.b },
-                { "a", c.a }
-            };
+        static inline auto convert(const T &value)
+        -> decltype(to_json(std::declval<ofJson>(), value), std::declval<ofJson>()) {
+            ofJson json;
+            to_json(json, value);
+            return json;
         }
     };
 };
