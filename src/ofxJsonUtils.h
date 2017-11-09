@@ -17,7 +17,9 @@
 
 namespace bbb {
     namespace json_utils {
-        static inline ofJson loadFromFile(const std::string &path, bool isInDataDir = true) {
+        OF_DEPRECATED_MSG("ofxJsonUtils::loadFromFile() is deprecated, use ofLoadJson() instead.", static inline ofJson loadFromFile(const std::string &path, bool isInDataDir = true));
+
+        static inline ofJson loadFromFile(const std::string &path, bool isInDataDir) {
             const ofBuffer buffer = ofBufferFromFile(isInDataDir ? ofToDataPath(path, true) : path);
             if(buffer.size() == 0) {
                 ofLogWarning("ofxJsonUtils") << path << " not found or empty file";
@@ -26,8 +28,8 @@ namespace bbb {
             return ofJson::parse(buffer.getText());
         }
         
-        static inline std::vector<ofJson> loadNDJsonFromFile(const std::string &path, bool isInDataDir = true) {
-            ofBuffer buffer = ofBufferFromFile(isInDataDir ? ofToDataPath(path, true) : path);
+        static inline std::vector<ofJson> ofxLoadNDJson(const std::string &path) {
+            ofBuffer buffer = ofBufferFromFile(ofToDataPath(path, true));
             std::vector<ofJson> jsons;
             if(buffer.size() == 0) {
                 ofLogWarning("ofxJsonUtils") << path << " not found or empty file";
@@ -39,22 +41,36 @@ namespace bbb {
             }
             return jsons;
         }
+
+        OF_DEPRECATED_MSG("ofxJsonUtils::loadNDJsonFromFile() is deprecated, use ofxLoadNDJson() instead.", static inline std::vector<ofJson> loadNDJsonFromFile(const std::string &path, bool isInDataDir = true));
         
-        static inline bool writeToFile(const std::string &path, const ofJson &json, bool isInDataDir = true, int indent = -1) {
+        static inline std::vector<ofJson> loadNDJsonFromFile(const std::string &path, bool isInDataDir) {
+            return ofxLoadNDJson(path);
+        }
+        
+        OF_DEPRECATED_MSG("ofxJsonUtils::writeToFile() is deprecated, use ofSaveJson() instead.", static inline bool writeToFile(const std::string &path, const ofJson &json, bool isInDataDir = true, int indent = -1));
+        
+        static inline bool writeToFile(const std::string &path, const ofJson &json, bool isInDataDir, int indent) {
             const std::string file_path = isInDataDir ? ofToDataPath(path, true) : path;
             ofBuffer buf;
             buf.append(json.dump(indent));
             return ofBufferToFile(path, buf);
         }
         
-        static inline bool writeToNDJsonFile(const std::string &path, const std::vector<ofJson> &jsons, bool isInDataDir = true, int indent = -1) {
-            const std::string file_path = isInDataDir ? ofToDataPath(path, true) : path;
+        static inline bool ofxSaveNDJson(const std::string &path, const std::vector<ofJson> &jsons) {
+            const std::string file_path = ofToDataPath(path, true);
             ofBuffer buf;
             for(const auto &json : jsons) {
-                buf.append(json.dump(indent));
+                buf.append(json.dump());
                 buf.append("\n");
             }
             return ofBufferToFile(path, buf);
+        }
+
+        OF_DEPRECATED_MSG("ofxJsonUtils::writeToNDJsonFile() is deprecated, use ofxSaveNDJson() instead.", static inline bool writeToNDJsonFile(const std::string &path, const std::vector<ofJson> &jsons, bool isInDataDir = true, int indent = -1));
+        
+        static inline bool writeToNDJsonFile(const std::string &path, const std::vector<ofJson> &jsons, bool isInDataDir, int indent) {
+            return ofxSaveNDJson(path, jsons);
         }
         
         OF_DEPRECATED_MSG("ofxJsonUtils::ofxJsonToFile() is deprecated, use ofxJsonUtils::writeToFile() instead.", static inline bool ofxJsonToFile(const std::string &path, const ofJson &json, bool isInDataDir = true, int indent = -1));
@@ -97,6 +113,9 @@ namespace bbb {
         }
     };
 };
+
+using bbb::json_utils::ofxLoadNDJson;
+using bbb::json_utils::ofxSaveNDJson;
 
 #include "ofxJsonify.h"
 namespace ofxJsonUtils = bbb::json_utils;
