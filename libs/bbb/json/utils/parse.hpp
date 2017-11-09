@@ -28,19 +28,28 @@ namespace bbb {
             
             void print_parse_error(const char * const header, const char * const error_str) {
                 std::cerr << "[" << header << "] " << error_str << std::endl;
-            }
+            };
         };
-        
+    };
+};
+
+template <typename type>
+static inline auto from_json(const bbb::json &json, type &value)
+    -> typename std::enable_if<bbb::json_utils::detail::is_json_loadable<type>::value>::type
+{
+    value.load(json);
+}
+
+template <typename type>
+static inline void from_json(const bbb::json &json, std::shared_ptr<type> &ptr) {
+    *((ptr = ptr ? ptr : std::shared_ptr<type>(new type())).get()) = json;
+}
+
+namespace bbb {
+    namespace json_utils {
         template <typename type>
-        static inline auto parse(const bbb::json &json, type &value)
-        -> typename std::enable_if<json_utils::detail::is_json_loadable<type>::value>::type {
-            value.load(json);
-        }
-        
-        template <typename type>
-        static inline void parse(const bbb::json &json, std::shared_ptr<type> &ptr) {
-            ptr = ptr ? ptr : std::shared_ptr<type>(new type());
-            parse(json, *(ptr.get()));
+        static inline void parse(const bbb::json &json, type &value) {
+            value = json;
         }
     };
 };

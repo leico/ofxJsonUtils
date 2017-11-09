@@ -110,18 +110,6 @@ static inline auto to_json(ofJson &json, Type &v)
     json = v.toJson();
 }
 
-namespace bbb {
-    namespace json_utils {
-        template <typename T>
-        static inline auto convert(const T &value)
-        -> decltype(to_json(std::declval<ofJson>(), value), std::declval<ofJson>()) {
-            ofJson json;
-            to_json(json, value);
-            return json;
-        }
-    };
-};
-
 namespace ofx {
     namespace JsonUtils = bbb::json_utils;
 };

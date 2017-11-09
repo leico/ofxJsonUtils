@@ -166,16 +166,6 @@ static inline auto from_json(const ofJson &json, Type &v)
     v.loadJson(json);
 }
 
-namespace bbb {
-    namespace json_utils {
-        template <typename T>
-        static inline auto parse(const ofJson &json, T &value)
-        -> decltype(from_json(json, value)) {
-            from_json(json, value);
-        }
-    };
-};
-
 namespace ofx {
     namespace JsonUtils = bbb::json_utils;
 };

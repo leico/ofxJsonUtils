@@ -65,8 +65,22 @@ namespace bbb {
             }
             load(json, std::forward<others>(args) ...);
         }
-
     };
 };
+
+#include "detail/pp_map.hpp"
+
+#define BBB_PP_TO_JSON(key) json[#key] = key;
+#define BBB_PP_FROM_JSON(key) key = json[#key];
+
+//#define BBB_DEF_JSONIZE(Class, ...)\
+//template <typename type = Class, typename = typename std::enable_if<!std::is_default_constructible<type>::value>::type> Class() {};\
+//Class(const bbb::json &json) { *this = json; };\
+//bbb::json to_json() const { bbb::json json; BBB_PP_MAP(BBB_PP_TO_JSON, __VA_ARGS__); return json; };\
+//void from_json(const bbb::json &json) { BBB_PP_MAP(BBB_PP_FROM_JSON, __VA_ARGS__);};
+
+#define BBB_DEF_JSONIZE(Class, ...)\
+bbb::json to_json() const { bbb::json json; BBB_PP_MAP(BBB_PP_TO_JSON, __VA_ARGS__); return json; };\
+void load_json(const bbb::json &json) { BBB_PP_MAP(BBB_PP_FROM_JSON, __VA_ARGS__);};
 
 #endif /* bbb_json_utils_utility_hpp */

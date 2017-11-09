@@ -28,17 +28,26 @@ namespace bbb {
                 static bool const value = decltype(test<type>(nullptr))::value;
             };
         };
+    };
+};
 
+template <typename type>
+static inline auto to_json(bbb::json &json, const type &value)
+    -> typename std::enable_if<bbb::json_utils::detail::is_json_encodable<type>::value>::type
+{
+    json = value.to_json();
+}
+
+template <typename T>
+static inline bbb::json to_json(bbb::json &json, const std::shared_ptr<T> &ptr) {
+    json = ptr ? convert(*(ptr.get())) : bbb::json();
+}
+
+namespace bbb {
+    namespace json_utils {
         template <typename type>
-        static inline auto convert(const type &value)
-        -> typename std::enable_if<json_utils::detail::is_json_encodable<type>::value, bbb::json>::type
-        {
-            return value.to_json();
-        }
-
-        template <typename T>
-        bbb::json inline convert(const std::shared_ptr<T> &ptr) {
-            return ptr ? convert(*(ptr.get())) : bbb::json();
+        static inline bbb::json convert(const type &value) {
+            return value;
         }
     };
 };
