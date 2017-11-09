@@ -101,4 +101,8 @@ namespace bbb {
 #include "ofxJsonify.h"
 namespace ofxJsonUtils = bbb::json_utils;
 
+#define OFX_JSONIZE(Class, ...)\
+bbb::json toJson() const { bbb::json json; BBB_PP_MAP(BBB_PP_TO_JSON, __VA_ARGS__); return json; };\
+void loadJson(const bbb::json &json) { BBB_PP_MAP(BBB_PP_FROM_JSON, __VA_ARGS__);};
+
 #define kv(name) #name, name
