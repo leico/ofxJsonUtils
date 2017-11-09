@@ -41,6 +41,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		959D58931FB410E100FDC904 /* pp_map.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pp_map.hpp; sourceTree = "<group>"; };
 		95C2E9791F80FBCA00910F3A /* ofJson_compatible.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofJson_compatible.h; sourceTree = "<group>"; };
 		95C2E97A1F80FBCA00910F3A /* ofxJsonConvertFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJsonConvertFunctions.h; sourceTree = "<group>"; };
 		95C2E97B1F80FBCA00910F3A /* ofxJsonify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJsonify.h; sourceTree = "<group>"; };
@@ -88,6 +89,14 @@
 			children = (
 			);
 			name = local_addons;
+			sourceTree = "<group>";
+		};
+		959D58921FB410C300FDC904 /* detail */ = {
+			isa = PBXGroup;
+			children = (
+				959D58931FB410E100FDC904 /* pp_map.hpp */,
+			);
+			path = detail;
 			sourceTree = "<group>";
 		};
 		95C2E9781F80FBCA00910F3A /* src */ = {
@@ -158,6 +167,7 @@
 		95C2E9851F80FBCA00910F3A /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				959D58921FB410C300FDC904 /* detail */,
 				95C2E9861F80FBCA00910F3A /* common.hpp */,
 				95C2E9871F80FBCA00910F3A /* constants.hpp */,
 				95C2E9881F80FBCA00910F3A /* convert.hpp */,
