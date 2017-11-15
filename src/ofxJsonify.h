@@ -20,18 +20,21 @@ namespace bbb {
         template <typename Base>
         struct Jsonify {
         public:
-            bool loadFromJsonFile(const std::string &path, bool isInDataDir = true) {
-                const std::string file_path = isInDataDir ? ofToDataPath(path, true) : path;
+            bool loadJson(const std::string &path) {
+                const std::string file_path = ofToDataPath(path, true);
                 if(!ofFile(file_path).exists()) {
                     ofLogWarning("ofxJsonUtils::loadFromJsonFile") << file_path << " isn't exists";
                     return false;
                 }
-                parse(json_utils::loadFromFile(path, isInDataDir), static_cast<Base &>(*this));
+                parse(ofLoadJson(path), static_cast<Base &>(*this));
                 return true;
             }
-            void loadFromJsonString(const std::string &json_str) {
+            bool loadFromJsonFile(const std::string &path, bool isInDataDir = true) { return loadJson(path); }
+
+            void loadJsonString(const std::string &json_str) {
                 parse(json_utils::parse(json_str), static_cast<Base &>(*this));
             }
+            inline void loadFromJsonString(const std::string &json_str) { loadJsonString(json_str); }
             
             inline operator ofJson() const { return toJson(); }
             
