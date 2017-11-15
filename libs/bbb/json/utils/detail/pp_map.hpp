@@ -7,6 +7,19 @@
 #ifndef bbb_pp_map_hpp
 #define bbb_pp_map_hpp
 
+//const num = 32;
+//const arr = [1];
+//const res = [];
+//res.push("#define BBB_FOR_" + 1 + "(F, ARG) F(ARG)");
+//for(var i = 2; i <= num; i++) {
+//    res.push("#define BBB_FOR_" + i + "(F, ARG, ...) F(ARG) BBB_FOR_" + (i - 1) + "(F, __VA_ARGS__)");
+//    arr.push(i);
+//}
+//res.push("#define BBB_SELECT_FOR(" + arr.map(i => "ARG" + i).join(", ") + ", SELECTED_FOR) SELECTED_FOR");
+//res.push("#define BBB_FOR(F, ...) BBB_SELECT_FOR(__VA_ARGS__, " + arr.map(i => "BBB_FOR_" + (arr.length - i + 1)).join(", ") + ")(__VA_ARGS__)");
+//
+//console.log(res.join("\n"));
+
 #define BBB_PP_MAP_1(F, ARG) F(ARG)
 #define BBB_PP_MAP_2(F, ARG, ...) F(ARG) BBB_PP_MAP_1(F, __VA_ARGS__)
 #define BBB_PP_MAP_3(F, ARG, ...) F(ARG) BBB_PP_MAP_2(F, __VA_ARGS__)
