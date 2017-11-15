@@ -72,7 +72,7 @@ public:
     void setup() {
         {
             // simple load
-            ofJson json = ofxJsonUtils::loadFromFile("example.json");
+            ofJson json = ofLoadJson("example.json");
             ofLogNotice("load test") << json.dump();
         }
         
