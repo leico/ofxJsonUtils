@@ -39,7 +39,7 @@ static inline auto to_json(bbb::json &json, const type &value)
 }
 
 template <typename T>
-static inline bbb::json to_json(bbb::json &json, const std::shared_ptr<T> &ptr) {
+static inline void to_json(bbb::json &json, const std::shared_ptr<T> &ptr) {
     json = ptr ? convert(*(ptr.get())) : bbb::json();
 }
 
